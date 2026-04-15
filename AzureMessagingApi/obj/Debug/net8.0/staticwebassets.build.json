@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "wHddxGkaFRIgKnvAy1eXErO6whtI6YVttmubwt5fV9k=",
+  "Source": "AzureMessagingApi",
+  "BasePath": "_content/AzureMessagingApi",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
