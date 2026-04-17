@@ -27,6 +27,20 @@ builder.Services.AddSingleton(sp =>
         }
     };
 
+    // In-cluster pods can't use the Windows trust store, and the emulator cert is issued for
+    // CN=localhost (not host.docker.internal). Opt-in bypass for dev/emulator environments only.
+    if (config.GetValue<bool>("CosmosDb:TrustEmulatorCert"))
+    {
+        options.HttpClientFactory = () =>
+        {
+            var handler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = (_, _, _, _) => true
+            };
+            return new HttpClient(handler);
+        };
+    }
+
     return new CosmosClient(connectionString, options);
 });
 
@@ -64,11 +78,14 @@ app.MapControllers();
 // Health endpoints — API liveness + Cosmos readiness (init runs in background)
 app.MapGet("/health", () => Results.Ok(new { status = "alive", timestamp = DateTime.UtcNow }));
 app.MapGet("/health/cosmos", (CosmosHealthState state) =>
-    Results.Ok(new
+{
+    var body = new
     {
         ready = state.IsReady,
         readyAt = state.ReadyAt,
         lastError = state.LastError
-    }));
+    };
+    return state.IsReady ? Results.Ok(body) : Results.Json(body, statusCode: 503);
+});
 
 app.Run();

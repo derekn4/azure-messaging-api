@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: azure-messaging-api
+  labels:
+    app: azure-messaging-api
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: azure-messaging-api
+  template:
+    metadata:
+      labels:
+        app: azure-messaging-api
+    spec:
+      containers:
+        - name: api
+          image: azure-messaging-api:local
+          # Local image, not pulled from a registry (Docker Desktop K8s shares the image cache)
+          imagePullPolicy: Never
+          ports:
+            - name: http
+              containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: azure-messaging-api-config
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          # Liveness: is the process alive at all? Restart on failure.
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          # Readiness: is Cosmos initialized and ready to serve? Pull from load balancer if not.
+          # /health/cosmos returns 503 until CosmosInitializer completes.
+          readinessProbe:
+            httpGet:
+              path: /health/cosmos
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3

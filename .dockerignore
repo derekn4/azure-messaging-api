@@ -1,0 +1,14 @@
+**/bin
+**/obj
+**/.vs
+**/.vscode
+**/*.user
+**/node_modules
+**/*.md
+.git
+.gitignore
+k8s/
+docker-compose.yml
+servicebus-config.json
+test-cosmos.csx
+cosmos-emulator.crt

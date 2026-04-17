@@ -1,0 +1,25 @@
+# .NET build output
+**/bin/
+**/obj/
+
+# Visual Studio / Rider / IDE
+.vs/
+.idea/
+*.user
+*.suo
+*.swp
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Local dev artifacts
+cosmos-emulator.crt
+*.log
+
+# Secrets (safe defaults — emulator keys in appsettings.Development.json are public
+# well-known values, but NEVER commit real production secrets. Use User Secrets or env vars.)
+.env
+.env.*
+appsettings.Production.json
+secrets.yaml
