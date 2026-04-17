@@ -35,7 +35,7 @@ public class CosmosMessageRepository : IMessageRepository
 
     public async Task<IEnumerable<Message>> GetByRecipientAsync(string recipientId)
     {
-        var query = new QueryDefinition("SELECT * FROM c WHERE c.RecipientId = @recipientId ORDER BY c.Timestamp DESC")
+        var query = new QueryDefinition("SELECT * FROM c WHERE c.recipientId = @recipientId ORDER BY c.timestamp DESC")
             .WithParameter("@recipientId", recipientId);
 
         return await ExecuteQueryAsync(query);
@@ -43,7 +43,7 @@ public class CosmosMessageRepository : IMessageRepository
 
     public async Task<IEnumerable<Message>> GetUnreadByRecipientAsync(string recipientId)
     {
-        var query = new QueryDefinition("SELECT * FROM c WHERE c.RecipientId = @recipientId AND c.Status != 'read' ORDER BY c.Timestamp DESC")
+        var query = new QueryDefinition("SELECT * FROM c WHERE c.recipientId = @recipientId AND c.status != 'read' ORDER BY c.timestamp DESC")
             .WithParameter("@recipientId", recipientId);
 
         return await ExecuteQueryAsync(query);

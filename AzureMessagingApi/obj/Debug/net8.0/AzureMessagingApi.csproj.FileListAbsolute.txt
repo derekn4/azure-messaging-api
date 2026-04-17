@@ -66,3 +66,5 @@ E:\Github Projs\interview-prac\coding-level-up\azure-messaging-api\AzureMessagin
 E:\Github Projs\interview-prac\coding-level-up\azure-messaging-api\AzureMessagingApi\obj\Debug\net8.0\AzureMessagingApi.pdb
 E:\Github Projs\interview-prac\coding-level-up\azure-messaging-api\AzureMessagingApi\obj\Debug\net8.0\AzureMessagingApi.genruntimeconfig.cache
 E:\Github Projs\interview-prac\coding-level-up\azure-messaging-api\AzureMessagingApi\obj\Debug\net8.0\ref\AzureMessagingApi.dll
+E:\Github Projs\interview-prac\coding-level-up\azure-messaging-api\AzureMessagingApi\obj\Debug\net8.0\AzureMessagingApi.sourcelink.json
+E:\Github Projs\interview-prac\coding-level-up\azure-messaging-api\AzureMessagingApi\bin\Debug\net8.0\Newtonsoft.Json.dll

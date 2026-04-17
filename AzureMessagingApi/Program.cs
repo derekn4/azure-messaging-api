@@ -15,7 +15,14 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton(sp =>
 {
     var config = sp.GetRequiredService<IConfiguration>();
-    return new CosmosClient(config["CosmosDb:ConnectionString"]);
+    var connectionString = config["CosmosDb:ConnectionString"];
+    var options = new CosmosClientOptions
+    {
+        ConnectionMode = ConnectionMode.Gateway,
+        RequestTimeout = TimeSpan.FromSeconds(30)
+    };
+
+    return new CosmosClient(connectionString, options);
 });
 
 // Register Service Bus client
@@ -29,7 +36,11 @@ builder.Services.AddSingleton(sp =>
 builder.Services.AddScoped<IMessageRepository, CosmosMessageRepository>();
 builder.Services.AddScoped<MessageService>();
 
-// Register background worker
+// Cosmos health state (singleton, shared between initializer and health endpoint)
+builder.Services.AddSingleton<CosmosHealthState>();
+
+// Register background workers — CosmosInitializer first so it starts before DeliveryWorker
+builder.Services.AddHostedService<CosmosInitializer>();
 builder.Services.AddHostedService<DeliveryWorker>();
 
 var app = builder.Build();
@@ -44,5 +55,15 @@ if (app.Environment.IsDevelopment())
 app.UseMiddleware<RequestLoggingMiddleware>();
 app.UseHttpsRedirection();
 app.MapControllers();
+
+// Health endpoints — API liveness + Cosmos readiness (init runs in background)
+app.MapGet("/health", () => Results.Ok(new { status = "alive", timestamp = DateTime.UtcNow }));
+app.MapGet("/health/cosmos", (CosmosHealthState state) =>
+    Results.Ok(new
+    {
+        ready = state.IsReady,
+        readyAt = state.ReadyAt,
+        lastError = state.LastError
+    }));
 
 app.Run();
