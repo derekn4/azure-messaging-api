@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AzureMessagingApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6bc726c57880bb7dff2c60bd3d60e7cb5296ff78")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bbefdc55976851aa96d96b28fbe01ff3f2be7324")]
 [assembly: System.Reflection.AssemblyProductAttribute("AzureMessagingApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AzureMessagingApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

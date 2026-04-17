@@ -19,7 +19,12 @@ builder.Services.AddSingleton(sp =>
     var options = new CosmosClientOptions
     {
         ConnectionMode = ConnectionMode.Gateway,
-        RequestTimeout = TimeSpan.FromSeconds(30)
+        LimitToEndpoint = true,
+        RequestTimeout = TimeSpan.FromSeconds(30),
+        SerializerOptions = new CosmosSerializationOptions
+        {
+            PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase
+        }
     };
 
     return new CosmosClient(connectionString, options);
