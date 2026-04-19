@@ -1,6 +1,7 @@
 using Azure.Messaging.ServiceBus;
 using AzureMessagingApi.Models;
 using AzureMessagingApi.Repositories;
+using AzureMessagingApi.Telemetry;
 using System.Text.Json;
 
 namespace AzureMessagingApi.Services;
@@ -31,8 +32,18 @@ public class DeliveryWorker : BackgroundService
 
     private async Task ProcessMessageAsync(ProcessMessageEventArgs args)
     {
+        using var activity = Instrumentation.ActivitySource.StartActivity("Messages.Deliver");
+
         var message = JsonSerializer.Deserialize<Message>(args.Message.Body.ToString());
-        if (message == null) return;
+        if (message == null)
+        {
+            _logger.LogWarning("Received Service Bus message with unparseable body; completing to skip");
+            await args.CompleteMessageAsync(args.Message);
+            return;
+        }
+
+        activity?.SetTag("messaging.message_id", message.Id);
+        activity?.SetTag("messaging.recipient_id", message.RecipientId);
 
         using var scope = _scopeFactory.CreateScope();
         var repository = scope.ServiceProvider.GetRequiredService<IMessageRepository>();
@@ -42,7 +53,11 @@ public class DeliveryWorker : BackgroundService
         {
             stored.Status = "delivered";
             await repository.UpdateAsync(stored);
-            _logger.LogInformation("Message {MessageId} delivered", message.Id);
+            _logger.LogInformation("Message {MessageId} delivered to {RecipientId}", message.Id, message.RecipientId);
+        }
+        else
+        {
+            _logger.LogWarning("Message {MessageId} not found in Cosmos when delivering — possible race or orphan", message.Id);
         }
 
         await args.CompleteMessageAsync(args.Message);
