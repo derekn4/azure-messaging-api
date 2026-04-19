@@ -14,4 +14,4 @@ data:
   # Opt-in bypass: emulator cert is issued for CN=localhost, pods connect via host.docker.internal
   CosmosDb__TrustEmulatorCert: "true"
   ServiceBus__ConnectionString: "Endpoint=sb://host.docker.internal;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentEmulator=true;"
-  ServiceBus__QueueName: "messages"
+  ServiceBus__QueueName: "message-delivery"
